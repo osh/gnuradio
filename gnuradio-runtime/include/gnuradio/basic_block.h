@@ -184,8 +184,8 @@ namespace gr {
     // ** Message passing interface **
     void message_port_register_in(pmt::pmt_t port_id);
     void message_port_register_out(pmt::pmt_t port_id);
-    void message_port_pub(pmt::pmt_t port_id, pmt::pmt_t msg);
-    void message_port_sub(pmt::pmt_t port_id, pmt::pmt_t target);
+    virtual void message_port_pub(pmt::pmt_t port_id, pmt::pmt_t msg);
+    virtual void message_port_sub(pmt::pmt_t port_id, pmt::pmt_t target);
     void message_port_unsub(pmt::pmt_t port_id, pmt::pmt_t target);
 
     virtual bool message_port_is_hier(pmt::pmt_t port_id) { (void) port_id; std::cout << "is_hier\n"; return false; }

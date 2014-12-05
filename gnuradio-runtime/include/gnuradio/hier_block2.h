@@ -25,6 +25,7 @@
 
 #include <gnuradio/api.h>
 #include <gnuradio/basic_block.h>
+#include <gnuradio/message_helper.h>
 
 namespace gr {
 
@@ -51,6 +52,12 @@ namespace gr {
       make_hier_block2(const std::string &name,
                        gr::io_signature::sptr input_signature,
                        gr::io_signature::sptr output_signature);
+    
+    /*!
+     * \brief helpers for hier block msg ports
+     */
+    std::map<std::string, message_helper_sptr> d_msg_helpers_in;
+    std::map<std::string, message_helper_sptr> d_msg_helpers_out;
 
     /*!
      * \brief Private implementation details of gr::hier_block2
@@ -209,6 +216,44 @@ namespace gr {
       if(pmt::dict_has_key(d_message_subscribers, port_id))
         throw std::invalid_argument("block already has a primitive output port by this name");
       hier_message_ports_out = pmt::list_add(hier_message_ports_out, port_id);
+    }
+    
+    /*!
+     * \brief register an input port from the hier block directly (non hier port)
+     *
+     * \param port_id the name of the port
+     */
+    void message_port_register_in(pmt::pmt_t port_id) {
+        std::string portname = pmt::symbol_to_string(port_id);
+        // register the port
+        message_port_register_hier_out(port_id);
+        // set up the stub block
+        d_msg_helpers_in[portname] = make_message_helper_sptr(portname);
+    }
+
+    /*!
+     * \brief register an output port from the hier block directly (non hier port)
+     *
+     * \param port_id the name of the port
+     */
+    void message_port_register_out(pmt::pmt_t port_id) {
+        std::string portname = pmt::symbol_to_string(port_id);
+        // register the port
+        message_port_register_hier_in(port_id);
+        // set up the stub block
+        d_msg_helpers_out[portname] = make_message_helper_sptr(portname);
+        // connect
+        msg_connect( d_msg_helpers_out[portname]->to_basic_block(), port_id, self(), port_id);
+    }
+
+    /*!
+     * \brief publish a message to the output port of a hier block
+     *
+     * \param port_id the name of the port
+     * \param msg the msg to publish
+     */
+    void message_port_pub(pmt::pmt_t port_id, pmt::pmt_t msg){
+        d_msg_helpers_out[pmt::symbol_to_string(port_id)]->post(msg);
     }
 
     /*!

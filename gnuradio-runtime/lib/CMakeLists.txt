@@ -90,6 +90,7 @@ list(APPEND gnuradio_runtime_sources
   logger.cc
   malloc16.c
   message.cc
+  message_helper.cc
   misc.cc
   msg_accepter.cc
   msg_handler.cc
