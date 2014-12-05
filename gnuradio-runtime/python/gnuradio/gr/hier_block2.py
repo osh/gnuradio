@@ -126,6 +126,15 @@ class hier_block2(object):
     def message_port_register_hier_out(self, portname):
         self.primitive_message_port_register_hier_out(pmt.intern(portname));
 
+    def message_port_register_out(self, portname):
+        self.primitive_message_port_register_out(pmt.intern(portname));
+
+    def message_port_register_in(self, portname):
+        self.primitive_message_port_register_in(pmt.intern(portname));
+
+    def message_port_pub(self, portname, msg):
+        self.primitive_message_port_pub(pmt.intern(portname), msg);
+
     def dot_graph(self):
         '''Return graph representation in dot language'''
         return dot_graph(self._hb)
